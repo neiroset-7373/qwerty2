@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">QwerUI</string>
+    <string name="title_activity_main">QwerUI</string>
+    <string name="package_name">org.wintozo.qwerui</string>
+    <string name="custom_url_scheme">org.wintozo.qwerui</string>
+</resources>
