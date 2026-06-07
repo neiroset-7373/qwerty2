@@ -57,7 +57,7 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
     setStartupState('photo');
     setTimeout(() => {
       setStartupState('ready');
-      setTimeout(() => onPhoneReady(), 100);
+      onPhoneReady();
     }, 4000);
   };
 
@@ -82,12 +82,6 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
     return <WintoPhoneOOBE onComplete={handleOOBEComplete} />;
   }
 
-  if (startupState === 'restart') {
-    return <RestartScreen onRestartComplete={handleRestartComplete} />;
-  }
-
   // ready - показываем белый экран пока Phone не переключится
-  return (
-    <div className="absolute inset-0 bg-white" />
-  );
+  return null;
 }

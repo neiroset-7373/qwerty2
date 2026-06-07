@@ -40,8 +40,8 @@ export default function Phone() {
         <div
           className="relative"
           style={{
-            width: 375,
-            height: 812,
+            width: 300,
+            height: 640,
           }}
         >
           <div
@@ -65,8 +65,8 @@ export default function Phone() {
       <div
         className="relative flex flex-col"
         style={{
-          width: 340,
-          height: 720,
+          width: 300,
+          height: 640,
         }}
       >
         {/* Phone outer frame */}
