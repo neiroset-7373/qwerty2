@@ -8,13 +8,24 @@ interface SecurityForZapuskOrOOBEProps {
   onPhoneReady: () => void;
 }
 
-type PhoneStartupState = 'setup' | 'oobe' | 'restart' | 'ready';
+type PhoneStartupState = 'loading' | 'setup' | 'oobe' | 'restart' | 'ready';
 
 export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZapuskOrOOBEProps) {
   const isOOBECompleted = usePhoneStore(s => s.isOOBECompleted);
-  const [startupState, setStartupState] = useState<PhoneStartupState>('setup');
+  const [startupState, setStartupState] = useState<PhoneStartupState>('loading');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    // Ждём загрузки состояния из localStorage
+    const unsubscribe = usePhoneStore.persist.onFinishHydration(() => {
+      setIsHydrated(true);
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+    
     if (isOOBECompleted) {
       // Уже настроен - сразу на рабочий стол
       setStartupState('ready');
@@ -23,7 +34,7 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
       // Не настроен - сначала setup, потом oobe, потом перезапуск
       setStartupState('setup');
     }
-  }, [isOOBECompleted, onPhoneReady]);
+  }, [isHydrated, isOOBECompleted, onPhoneReady]);
 
   const handleSetupComplete = () => {
     setStartupState('oobe');

@@ -46,10 +46,10 @@ export default function OOBEPinCodeMaster({ onComplete, onSkip }: OOBEPinCodeMas
   const currentPin = step === 'enter' ? pin : confirmPin;
 
   return (
-    <div className="absolute inset-0 flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="absolute inset-0 flex flex-col bg-white">
       {/* Header */}
       <div className="pt-12 pb-6 px-8 text-center">
-        <div className="text-2xl font-bold mb-2">
+        <div className="text-2xl font-bold mb-2 text-slate-800">
           {step === 'enter' ? 'Придумайте PIN-код' : 'Подтвердите PIN-код'}
         </div>
         <div className="text-slate-400 text-sm">
@@ -58,14 +58,14 @@ export default function OOBEPinCodeMaster({ onComplete, onSkip }: OOBEPinCodeMas
       </div>
 
       {/* PIN Dots */}
-      <div className="flex items-center justify-center gap-4 mb-8">
+      <div className="flex items-center justify-center gap-4 mb-4">
         {[0, 1, 2, 3].map(i => (
           <div
             key={i}
             className={`w-4 h-4 rounded-full border-2 transition-all duration-300 ${
               i < currentPin.length
-                ? 'bg-white border-white scale-110'
-                : 'border-slate-500 bg-transparent'
+                ? 'bg-blue-500 border-blue-500 scale-110'
+                : 'border-slate-300 bg-transparent'
             }`}
           />
         ))}
@@ -73,7 +73,7 @@ export default function OOBEPinCodeMaster({ onComplete, onSkip }: OOBEPinCodeMas
 
       {/* Error message */}
       {error && (
-        <div className="text-center text-red-400 text-sm mb-4 animate-pulse">
+        <div className="text-center text-red-500 text-sm mb-4 animate-pulse">
           {error}
         </div>
       )}
@@ -84,7 +84,7 @@ export default function OOBEPinCodeMaster({ onComplete, onSkip }: OOBEPinCodeMas
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => (
             <button
               key={digit}
-              className="w-20 h-20 rounded-full bg-slate-800/50 hover:bg-slate-700/50 active:bg-slate-600/50 transition-all duration-200 text-2xl font-semibold backdrop-blur-sm border border-slate-700/30"
+              className="w-20 h-20 rounded-full bg-slate-50 hover:bg-blue-50 active:bg-blue-100 transition-all duration-200 text-2xl font-semibold text-slate-700 border border-slate-200"
               onClick={() => handleDigit(digit.toString())}
             >
               {digit}
@@ -99,7 +99,7 @@ export default function OOBEPinCodeMaster({ onComplete, onSkip }: OOBEPinCodeMas
             <span className="text-slate-400 text-sm font-medium">Пропустить</span>
           </button>
           <button
-            className="w-20 h-20 rounded-full bg-slate-800/50 hover:bg-slate-700/50 active:bg-slate-600/50 transition-all duration-200 text-2xl font-semibold backdrop-blur-sm border border-slate-700/30"
+            className="w-20 h-20 rounded-full bg-slate-50 hover:bg-blue-50 active:bg-blue-100 transition-all duration-200 text-2xl font-semibold text-slate-700 border border-slate-200"
             onClick={() => handleDigit('0')}
           >
             0
@@ -121,8 +121,8 @@ export default function OOBEPinCodeMaster({ onComplete, onSkip }: OOBEPinCodeMas
         <button
           className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
             currentPin.length === 4
-              ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30'
-              : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+              ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40'
+              : 'bg-slate-100 text-slate-400 cursor-not-allowed'
           }`}
           onClick={handleContinue}
           disabled={currentPin.length !== 4}
