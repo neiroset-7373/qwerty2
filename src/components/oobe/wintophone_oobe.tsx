@@ -22,12 +22,6 @@ export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
     iconStyle: 'android',
   });
 
-  // Задержка 2 секунды перед каждым шагом
-  const withLoading = (nextStep: OOBEStep, delay: number = 2000) => {
-    setStep('loading');
-    setTimeout(() => setStep(nextStep), delay);
-  };
-
   // Инициализация - переход к приветствию
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,34 +30,35 @@ export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleNextToWelcome = () => {
-    withLoading('loading-wifi');
+  const handleNextToWifi = () => {
+    setStep('loading-wifi');
+    setTimeout(() => setStep('wifi'), 2000);
   };
 
   const handleWifiConnect = () => {
     setSettings(prev => ({ ...prev, wifiConnected: true }));
-    withLoading('loading-pin');
+    setStep('loading-pin');
     setTimeout(() => setStep('pin'), 2000);
   };
 
   const handlePinComplete = (pin: string) => {
     setSettings(prev => ({ ...prev, pinSet: true, pinCode: pin }));
-    withLoading('loading-update');
+    setStep('loading-update');
     setTimeout(() => setStep('update'), 2000);
   };
 
   const handlePinSkip = () => {
-    withLoading('loading-update');
+    setStep('loading-update');
     setTimeout(() => setStep('update'), 2000);
   };
 
   const handleUpdateComplete = () => {
-    withLoading('loading-install');
+    setStep('loading-install');
     setTimeout(() => setStep('install'), 2000);
   };
 
   const handleInstallComplete = () => {
-    withLoading('loading-icons');
+    setStep('loading-icons');
     setTimeout(() => setStep('icons'), 2000);
   };
 
@@ -80,7 +75,7 @@ export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
   return (
     <div className="absolute inset-0 overflow-hidden bg-white">
       {step === 'loading' && <LoadingScreen />}
-      {step === 'welcome' && <WelcomeScreen onNext={() => withLoading('loading-wifi')} />}
+      {step === 'welcome' && <WelcomeScreen onNext={handleNextToWifi} />}
       {step === 'loading-wifi' && <LoadingScreen />}
       {step === 'wifi' && <WiFiScreen connected={settings.wifiConnected} onConnect={handleWifiConnect} />}
       {step === 'loading-pin' && <LoadingScreen />}
