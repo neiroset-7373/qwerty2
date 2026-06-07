@@ -28,8 +28,16 @@ export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
     setTimeout(() => setStep(nextStep), delay);
   };
 
+  // Инициализация - переход к приветствию
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStep('welcome');
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleNextToWelcome = () => {
-    withLoading('welcome');
+    withLoading('loading-wifi');
   };
 
   const handleWifiConnect = () => {
