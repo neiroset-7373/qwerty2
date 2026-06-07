@@ -8,21 +8,22 @@ interface SecurityForZapuskOrOOBEProps {
   onPhoneReady: () => void;
 }
 
-type PhoneStartupState = 'loading' | 'setup' | 'oobe' | 'restart' | 'ready';
+type PhoneStartupState = 'photo' | 'setup' | 'oobe' | 'ready';
 
 export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZapuskOrOOBEProps) {
   const isOOBECompleted = usePhoneStore(s => s.isOOBECompleted);
-  const [startupState, setStartupState] = useState<PhoneStartupState>('loading');
+  const [startupState, setStartupState] = useState<PhoneStartupState>('photo');
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Сначала показываем фото 4 секунды
   useEffect(() => {
-    // Ждём загрузки состояния из localStorage
-    const unsubscribe = usePhoneStore.persist.onFinishHydration(() => {
+    const timer = setTimeout(() => {
       setIsHydrated(true);
-    });
-    return unsubscribe;
+    }, 4000);
+    return () => clearTimeout(timer);
   }, []);
 
+  // После фото проверяем состояние OOBE
   useEffect(() => {
     if (!isHydrated) return;
     
@@ -52,23 +53,23 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
       // Если нет PIN - сразу на home
       navigateTo('home', 'fade');
     }
-    // Показываем экран перезапуска (чёрный экран с фото)
-    setStartupState('restart');
+    // Перезапуск: фото 4 секунды, потом готово
+    setStartupState('photo');
+    setTimeout(() => {
+      setStartupState('ready');
+      setTimeout(() => onPhoneReady(), 100);
+    }, 4000);
   };
 
-  const handleRestartComplete = () => {
-    // Перезапуск завершён - запускаем систему на экран блокировки
-    const { navigateTo } = usePhoneStore.getState();
-    navigateTo('lock', 'fade');
-    setStartupState('ready');
-    setTimeout(() => onPhoneReady(), 100);
-  };
-
-  if (startupState === 'loading') {
-    // Показываем белый экран во время загрузки
+  if (startupState === 'photo') {
     return (
-      <div className="absolute inset-0 bg-white flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+      <div className="absolute inset-0 bg-black">
+        <img
+          src="/system_setup/WintoPhone_Setup.jpg"
+          alt="WintoPhone"
+          className="w-full h-full object-cover"
+          style={{ display: 'block' }}
+        />
       </div>
     );
   }
@@ -88,24 +89,5 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
   // ready - показываем белый экран пока Phone не переключится
   return (
     <div className="absolute inset-0 bg-white" />
-  );
-}
-
-function RestartScreen({ onRestartComplete }: { onRestartComplete: () => void }) {
-  useEffect(() => {
-    // Симулируем перезапуск: чёрный экран с фото запуска, затем система
-    const timer = setTimeout(onRestartComplete, 4000);
-    return () => clearTimeout(timer);
-  }, [onRestartComplete]);
-
-  return (
-    <div className="absolute inset-0 bg-black">
-      <img
-        src="/system_setup/WintoPhone_Setup.jpg"
-        alt="WintoPhone"
-        className="w-full h-full object-cover"
-        style={{ display: 'block' }}
-      />
-    </div>
   );
 }

@@ -6,10 +6,10 @@ interface WintoPhoneOOBEProps {
   onComplete: (settings: { iconStyle: IconStyle; pinCode?: string }) => void;
 }
 
-type OOBEStep = 'welcome' | 'wifi' | 'pin' | 'icons' | 'complete';
+type OOBEStep = 'loading' | 'welcome' | 'loading-wifi' | 'wifi' | 'loading-pin' | 'pin' | 'loading-update' | 'update' | 'loading-install' | 'install' | 'loading-icons' | 'icons' | 'complete';
 
 export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
-  const [step, setStep] = useState<OOBEStep>('welcome');
+  const [step, setStep] = useState<OOBEStep>('loading');
   const [settings, setSettings] = useState<{
     wifiConnected: boolean;
     pinSet: boolean;
@@ -22,18 +22,41 @@ export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
     iconStyle: 'android',
   });
 
+  // Задержка 2 секунды перед каждым шагом
+  const withLoading = (nextStep: OOBEStep, delay: number = 2000) => {
+    setStep('loading');
+    setTimeout(() => setStep(nextStep), delay);
+  };
+
+  const handleNextToWelcome = () => {
+    withLoading('welcome');
+  };
+
   const handleWifiConnect = () => {
     setSettings(prev => ({ ...prev, wifiConnected: true }));
-    setTimeout(() => setStep('pin'), 500);
+    withLoading('loading-pin');
+    setTimeout(() => setStep('pin'), 2000);
   };
 
   const handlePinComplete = (pin: string) => {
     setSettings(prev => ({ ...prev, pinSet: true, pinCode: pin }));
-    setTimeout(() => setStep('icons'), 500);
+    withLoading('loading-update');
+    setTimeout(() => setStep('update'), 2000);
   };
 
   const handlePinSkip = () => {
-    setTimeout(() => setStep('icons'), 500);
+    withLoading('loading-update');
+    setTimeout(() => setStep('update'), 2000);
+  };
+
+  const handleUpdateComplete = () => {
+    withLoading('loading-install');
+    setTimeout(() => setStep('install'), 2000);
+  };
+
+  const handleInstallComplete = () => {
+    withLoading('loading-icons');
+    setTimeout(() => setStep('icons'), 2000);
   };
 
   const handleIconSelect = (style: IconStyle) => {
@@ -48,12 +71,172 @@ export default function WintoPhoneOOBE({ onComplete }: WintoPhoneOOBEProps) {
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-white">
-      {step === 'welcome' && <WelcomeScreen onNext={() => setStep('wifi')} />}
+      {step === 'loading' && <LoadingScreen />}
+      {step === 'welcome' && <WelcomeScreen onNext={() => withLoading('loading-wifi')} />}
+      {step === 'loading-wifi' && <LoadingScreen />}
       {step === 'wifi' && <WiFiScreen connected={settings.wifiConnected} onConnect={handleWifiConnect} />}
+      {step === 'loading-pin' && <LoadingScreen />}
       {step === 'pin' && (
         <OOBEPinCodeMaster onComplete={handlePinComplete} onSkip={handlePinSkip} />
       )}
+      {step === 'loading-update' && <LoadingScreen />}
+      {step === 'update' && <UpdateScreen onComplete={handleUpdateComplete} />}
+      {step === 'loading-install' && <LoadingScreen />}
+      {step === 'install' && <InstallScreen onComplete={handleInstallComplete} />}
+      {step === 'loading-icons' && <LoadingScreen />}
       {step === 'icons' && <IconSelectionScreen selected={settings.iconStyle} onSelect={handleIconSelect} />}
+    </div>
+  );
+}
+
+// ============ Loading Screen ============
+function LoadingScreen() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-white">
+      <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+    </div>
+  );
+}
+
+// ============ Update Screen ============
+function UpdateScreen({ onComplete }: { onComplete: () => void }) {
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('Проверка обновлений...');
+
+  useEffect(() => {
+    const stages = [
+      { p: 15, s: 'Проверка обновлений...' },
+      { p: 35, s: 'Поиск доступных обновлений...' },
+      { p: 60, s: 'Загрузка обновлений...' },
+      { p: 85, s: 'Установка обновлений...' },
+      { p: 100, s: 'Готово!' },
+    ];
+
+    let currentStage = 0;
+    const interval = setInterval(() => {
+      if (currentStage < stages.length) {
+        setProgress(stages[currentStage].p);
+        setStatus(stages[currentStage].s);
+        currentStage++;
+      } else {
+        clearInterval(interval);
+        setTimeout(onComplete, 500);
+      }
+    }, 600);
+
+    return () => clearInterval(interval);
+  }, [onComplete]);
+
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8">
+      {/* Icon */}
+      <div className="mb-10">
+        <div className="w-28 h-28 rounded-full bg-blue-50 flex items-center justify-center">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" className="text-blue-500">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Title */}
+      <h2 className="text-3xl font-bold mb-3 text-center text-slate-800">Обновление</h2>
+      <p className="text-slate-400 text-center mb-8">{status}</p>
+
+      {/* Progress bar */}
+      <div className="w-full max-w-sm">
+        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="text-center text-slate-400 text-sm mt-3">{progress}%</div>
+      </div>
+    </div>
+  );
+}
+
+// ============ Install Screen ============
+function InstallScreen({ onComplete }: { onComplete: () => void }) {
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('Установка приложений...');
+
+  useEffect(() => {
+    const stages = [
+      { p: 10, s: 'Подготовка...' },
+      { p: 30, s: 'Установка Калькулятора...' },
+      { p: 50, s: 'Установка Музыки...' },
+      { p: 70, s: 'Установка Заметок...' },
+      { p: 90, s: 'Настройка системы...' },
+      { p: 100, s: 'Готово!' },
+    ];
+
+    let currentStage = 0;
+    const interval = setInterval(() => {
+      if (currentStage < stages.length) {
+        setProgress(stages[currentStage].p);
+        setStatus(stages[currentStage].s);
+        currentStage++;
+      } else {
+        clearInterval(interval);
+        setTimeout(onComplete, 500);
+      }
+    }, 700);
+
+    return () => clearInterval(interval);
+  }, [onComplete]);
+
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8">
+      {/* Icon */}
+      <div className="mb-10">
+        <div className="w-28 h-28 rounded-full bg-blue-50 flex items-center justify-center">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" className="text-blue-500">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" opacity="0.3"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Title */}
+      <h2 className="text-3xl font-bold mb-3 text-center text-slate-800">Установка</h2>
+      <p className="text-slate-400 text-center mb-8">{status}</p>
+
+      {/* Progress bar */}
+      <div className="w-full max-w-sm">
+        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="text-center text-slate-400 text-sm mt-3">{progress}%</div>
+      </div>
+
+      {/* App icons preview */}
+      <div className="mt-10 grid grid-cols-4 gap-4">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center shadow-lg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white">
+            <path d="M9 7h6M9 12h6M9 17h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center shadow-lg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white">
+            <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-white">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
     </div>
   );
 }
@@ -98,8 +281,6 @@ function WelcomeScreen({ onNext }: { onNext: () => void }) {
     </div>
   );
 }
-
-// ============ WiFi Screen ============
 function WiFiScreen({ connected, onConnect }: { connected: boolean; onConnect: () => void }) {
   const [animateIn, setAnimateIn] = useState(false);
 
