@@ -54,6 +54,9 @@ build/
 !**/android/gradlew.bat
 !**/android/gradle/wrapper/
 
+# Allow Android resources
+!**/android/app/src/main/res/
+
 # Node
 node_modules/
 dist/
