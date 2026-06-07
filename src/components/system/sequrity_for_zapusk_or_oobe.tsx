@@ -64,6 +64,15 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
     setTimeout(() => onPhoneReady(), 100);
   };
 
+  if (startupState === 'loading') {
+    // Показываем белый экран во время загрузки
+    return (
+      <div className="absolute inset-0 bg-white flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (startupState === 'setup') {
     return <SetupScreen onComplete={handleSetupComplete} />;
   }
@@ -76,7 +85,10 @@ export default function SecurityForZapuskOrOOBE({ onPhoneReady }: SecurityForZap
     return <RestartScreen onRestartComplete={handleRestartComplete} />;
   }
 
-  return null; // ready - переходим на рабочий стол
+  // ready - показываем белый экран пока Phone не переключится
+  return (
+    <div className="absolute inset-0 bg-white" />
+  );
 }
 
 function RestartScreen({ onRestartComplete }: { onRestartComplete: () => void }) {
