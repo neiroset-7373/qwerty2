@@ -49,6 +49,11 @@ build/
 **/android/app/build/
 **/android/build/
 
+# Allow gradlew
+!**/android/gradlew
+!**/android/gradlew.bat
+!**/android/gradle/wrapper/
+
 # Node
 node_modules/
 dist/
