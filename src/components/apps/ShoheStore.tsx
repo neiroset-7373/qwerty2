@@ -13,12 +13,14 @@ export default function ShoheStore() {
     ? { 
         calculator: '/apps_icons/system/Android Style/iz_marketa/calculator.jpg', 
         music: '/apps_icons/system/Android Style/iz_marketa/music.png', 
-        notes: '/apps_icons/system/Android Style/iz_marketa/zametki.png' 
+        notes: '/apps_icons/system/Android Style/iz_marketa/zametki.png',
+        qwertyai: '/apps_icons/system/Android Style/iz_marketa/wintobot_logo.jpg'
       }
     : { 
         calculator: '/apps_icons/system/Wintozo Syle/magazinskie/calculator.png', 
         music: '/apps_icons/system/Wintozo Syle/magazinskie/music.png', 
-        notes: '/apps_icons/system/Wintozo Syle/magazinskie/zametki.png' 
+        notes: '/apps_icons/system/Wintozo Syle/magazinskie/zametki.png',
+        qwertyai: '/apps_icons/system/Wintozo Syle/magazinskie/wintobot_logo.jpg'
       };
 
   const handleInstall = (appId: string) => {

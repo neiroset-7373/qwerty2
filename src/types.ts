@@ -8,7 +8,8 @@ export type AppName =
   | 'store'
   | 'calculator'
   | 'music'
-  | 'notes';
+  | 'notes'
+  | 'qwertyai';
 
 export type IconStyle = 'android' | 'wintozo';
 

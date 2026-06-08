@@ -38,6 +38,7 @@ const initialStoreApps: StoreApp[] = [
   { id: 'calculator', name: 'Калькулятор', color: '#6366f1', gradient: 'from-indigo-400 to-violet-600', installed: false, size: '8 МБ', rating: 4.7, category: 'Утилиты', icon: '/apps_icons/system/Android Style/iz_marketa/calculator.jpg' },
   { id: 'music', name: 'Музыка', color: '#f43f5e', gradient: 'from-rose-400 to-pink-600', installed: false, size: '24 МБ', rating: 4.8, category: 'Развлечения', icon: '/apps_icons/system/Android Style/iz_marketa/music.png' },
   { id: 'notes', name: 'Заметки', color: '#f97316', gradient: 'from-orange-400 to-amber-500', installed: false, size: '12 МБ', rating: 4.6, category: 'Продуктивность', icon: '/apps_icons/system/Android Style/iz_marketa/zametki.png' },
+  { id: 'qwertyai', name: 'WintoBot AI', color: '#8b5cf6', gradient: 'from-violet-400 to-purple-600', installed: false, size: '15 МБ', rating: 4.9, category: 'AI Ассистент', icon: '/apps_icons/system/Android Style/iz_marketa/wintobot_logo.jpg' },
 ];
 
 export const usePhoneStore = create<PhoneStore>()(

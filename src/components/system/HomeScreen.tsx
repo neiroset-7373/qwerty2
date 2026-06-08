@@ -28,8 +28,10 @@ const ICONS = {
 
 const getStoreAppIcon = (appId: string, iconStyle: IconStyle): string => {
   if (iconStyle === 'android') {
+    if (appId === 'qwertyai') return '/apps_icons/system/Android Style/iz_marketa/wintobot_logo.jpg';
     return `/apps_icons/system/Android Style/iz_marketa/${appId === 'calculator' ? 'calculator.jpg' : appId === 'music' ? 'music.png' : 'zametki.png'}`;
   } else {
+    if (appId === 'qwertyai') return '/apps_icons/system/Wintozo Syle/magazinskie/wintobot_logo.jpg';
     return `/apps_icons/system/Wintozo Syle/magazinskie/${appId}.png`;
   }
 };
