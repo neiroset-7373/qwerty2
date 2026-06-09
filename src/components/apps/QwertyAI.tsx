@@ -10,7 +10,7 @@ interface Message {
   timestamp: Date;
 }
 
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = 'YOUR_API_KEY_HERE';
 
 const SYSTEM_PROMPT = `Ты WintoBot - виртуальный ассистент телефона QwerUI 1.1.3 на базе WintoPhone. 
 Ты был создан командой Wintozo. Ты дружелюбный, полезный и всегда готов помочь.

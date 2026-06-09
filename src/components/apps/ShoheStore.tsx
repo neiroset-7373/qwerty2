@@ -70,7 +70,12 @@ export default function ShoheStore() {
               <div key={app.id} className="flex items-center gap-3 p-3 rounded-2xl border border-slate-100 bg-slate-50/50">
                 {/* App icon */}
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.gradient} shadow-md flex-shrink-0 shadow-slate-200 flex items-center justify-center overflow-hidden`}>
-                  <img src={app.id === 'calculator' ? appIcons.calculator : app.id === 'music' ? appIcons.music : appIcons.notes} alt={app.name} className="w-full h-full object-cover" />
+                  <img src={
+                    app.id === 'calculator' ? appIcons.calculator : 
+                    app.id === 'music' ? appIcons.music : 
+                    app.id === 'notes' ? appIcons.notes :
+                    appIcons.qwertyai
+                  } alt={app.name} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Info */}
