@@ -23,6 +23,8 @@ export default function ShoheStore() {
         qwertyai: '/apps_icons/system/Wintozo Syle/magazinskie/wintobot_logo.jpg'
       };
 
+  // Обновляем отображение имени qwertyai на WintoBot
+
   const handleInstall = (appId: string) => {
     if (installing || done.has(appId)) return;
     setInstalling(appId);

@@ -28,13 +28,13 @@ const ICONS = {
 
 const getStoreAppIcon = (appId: string, iconStyle: IconStyle): string => {
   if (iconStyle === 'android') {
-    if (appId === 'qwertyai') return '/apps_icons/system/Android Style/iz_marketa/wintobot_logo.jpg';
-    return `/apps_icons/system/Android Style/iz_marketa/${appId === 'calculator' ? 'calculator.jpg' : appId === 'music' ? 'music.png' : 'zametki.png'}`;
+    return `/apps_icons/system/Android Style/iz_marketa/${appId === 'calculator' ? 'calculator.jpg' : appId === 'music' ? 'music.png' : appId === 'qwertyai' ? 'wintobot_logo.jpg' : 'zametki.png'}`;
   } else {
-    if (appId === 'qwertyai') return '/apps_icons/system/Wintozo Syle/magazinskie/wintobot_logo.jpg';
-    return `/apps_icons/system/Wintozo Syle/magazinskie/${appId}.png`;
+    return `/apps_icons/system/Wintozo Syle/magazinskie/${appId === 'qwertyai' ? 'wintobot_logo.jpg' : appId}.png`;
   }
 };
+
+// Обновляем имя приложения qwertyai на WintoBot
 
 export default function HomeScreen() {
   const navigateTo = usePhoneStore(s => s.navigateTo);

@@ -10,7 +10,7 @@ import ShoheStore from '../apps/ShoheStore';
 import Calculator from '../apps/Calculator';
 import Music from '../apps/Music';
 import Notes from '../apps/Notes';
-import QwertyAI from '../apps/QwertyAI';
+import WintoBot from '../apps/wintobot';
 import SecurityForZapuskOrOOBE from './sequrity_for_zapusk_or_oobe';
 
 export default function Phone() {
@@ -149,7 +149,7 @@ export default function Phone() {
             {currentApp === 'calculator' && <Calculator key="calculator" />}
             {currentApp === 'music' && <Music key="music" />}
             {currentApp === 'notes' && <Notes key="notes" />}
-            {currentApp === 'qwertyai' && <QwertyAI key="qwertyai" />}
+            {currentApp === 'qwertyai' && <WintoBot key="qwertyai" />}
           </div>
         </div>
 

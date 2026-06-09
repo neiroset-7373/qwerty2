@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { usePhoneStore } from '../../store/usePhoneStore';
-import StatusBar from '../system/StatusBar';
-import NavBar from '../system/NavBar';
+import { usePhoneStore } from '../../../store/usePhoneStore';
+import StatusBar from '../../system/StatusBar';
+import NavBar from '../../system/NavBar';
+import { findTrigger } from './search_triggers';
+import { findCommand } from './Qwerlabs';
 
 interface Message {
   id: number;
@@ -10,15 +12,19 @@ interface Message {
   timestamp: Date;
 }
 
-const OPENROUTER_API_KEY = 'YOUR_API_KEY_HERE';
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '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';
 
 const SYSTEM_PROMPT = `Ты WintoBot - виртуальный ассистент телефона QwerUI 1.1.3 на базе WintoPhone. 
 Ты был создан командой Wintozo. Ты дружелюбный, полезный и всегда готов помочь.
 Отвечай кратко и по делу, как настоящий голосовой ассистент.
 Если тебя спрашивают кто ты - отвечай что ты WintoBot, AI-ассистент из QwerUI.
-Не говори что ты языковая модель или AI от OpenRouter - ты WintoBot!`;
+Не говори что ты языковая модель или AI от OpenRouter - ты WintoBot!
+На приветствия ("как дела", "привет", "здорово") отвечай дружелюбно и кратко.
+На странные сообщения (цифры, бессмыслица) отвечай с юмором, спрашивай что нужно.
+Отвечай на русском языке.
+Будь кратким - максимум 2-3 предложения.`;
 
-export default function QwertyAI() {
+export default function WintoBot() {
   const navigateTo = usePhoneStore(s => s.navigateTo);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -29,7 +35,7 @@ export default function QwertyAI() {
     }
   ]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingBot, setIsLoadingBot] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,7 +48,7 @@ export default function QwertyAI() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoadingBot) return;
 
     const userMessage: Message = {
       id: Date.now(),
@@ -53,9 +59,49 @@ export default function QwertyAI() {
 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
-    setIsLoading(true);
+    setIsLoadingBot(true);
 
+    // QWERLABS: Проверяем команды ПЕРЕД триггерами и API
+    const command = findCommand(userMessage.content);
+    if (command) {
+      const assistantMessage: Message = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: command.response,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Выполняем действие
+      if (command.action === 'open' && command.app) {
+        navigateTo(command.app, 'left');
+      }
+      
+      setIsLoadingBot(false);
+      inputRef.current?.focus();
+      return;
+    }
+
+    // Проверяем триггеры
+    const triggerResponse = findTrigger(userMessage.content);
+    if (triggerResponse) {
+      const assistantMessage: Message = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: triggerResponse,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsLoadingBot(false);
+      inputRef.current?.focus();
+      return;
+    }
+
+    // Нет триггера - отправляем на API
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 35000);
+
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -73,8 +119,11 @@ export default function QwertyAI() {
           ],
           max_tokens: 500,
           temperature: 0.7
-        })
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error('Ошибка сети');
@@ -91,16 +140,10 @@ export default function QwertyAI() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      const errorMessage: Message = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: 'Произошла ошибка подключения. Проверьте интернет и попробуйте снова. 📡',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
+    } catch (error: any) {
+      console.error('WintoBot API Error:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingBot(false);
       inputRef.current?.focus();
     }
   };
@@ -125,7 +168,7 @@ export default function QwertyAI() {
 
   return (
     <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 animate-slide-left">
-      <StatusBar dark />
+      <StatusBar />
 
       {/* Header */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between border-b border-white/10">
@@ -180,7 +223,7 @@ export default function QwertyAI() {
           </div>
         ))}
 
-        {isLoading && (
+        {isLoadingBot && (
           <div className="flex justify-start">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl rounded-bl-none px-4 py-3 border border-white/10">
               <div className="flex gap-1">
@@ -209,7 +252,7 @@ export default function QwertyAI() {
           />
           <button
             onClick={sendMessage}
-            disabled={isLoading || !input.trim()}
+            disabled={isLoadingBot || !input.trim()}
             className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">
