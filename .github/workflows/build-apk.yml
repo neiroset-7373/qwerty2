@@ -1,0 +1,60 @@
+name: Build APK (Android)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Install Capacitor
+        run: npm install --save-dev @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Initialize Capacitor
+        run: npx cap init "QwerUI" "com.wintozo.qwerui" --web-dir dist
+
+      - name: Add Android platform
+        run: npx cap add android --if-present
+
+      - name: Sync Android project
+        run: npx cap sync android
+
+      - name: Build APK
+        working-directory: wintophone/qwerui-2.0/android
+        run: chmod +x gradlew && ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: QwerUI-Android
+          path: wintophone/qwerui-2.0/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
