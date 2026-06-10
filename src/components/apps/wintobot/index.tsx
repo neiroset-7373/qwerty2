@@ -30,7 +30,7 @@ export default function WintoBot() {
     {
       id: 1,
       role: 'assistant',
-      content: 'Привет! Я WintoBot 🤖 Ваш персональный AI-ассистент. Чем могу помочь?',
+      content: 'Привет! Я WintoBot. Чем могу помочь?',
       timestamp: new Date()
     }
   ]);
@@ -166,6 +166,14 @@ export default function WintoBot() {
     ]);
   };
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   return (
     <div className="absolute inset-0 flex flex-col bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 animate-slide-left">
       <StatusBar />
@@ -208,17 +216,34 @@ export default function WintoBot() {
             key={message.id}
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div
-              className={`max-w-[85%] rounded-2xl px-3 py-2 ${
-                message.role === 'user'
-                  ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-br-none'
-                  : 'bg-white/10 backdrop-blur-sm text-white rounded-bl-none border border-white/10'
-              }`}
-            >
-              <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</div>
-              <div className={`text-xs mt-0.5 ${message.role === 'user' ? 'text-purple-200' : 'text-purple-300'}`}>
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <div className="max-w-[85%]">
+              <div
+                className={`rounded-2xl px-3 py-2 ${
+                  message.role === 'user'
+                    ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-br-none'
+                    : 'bg-white/10 backdrop-blur-sm text-white rounded-bl-none border border-white/10'
+                }`}
+              >
+                <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</div>
+                <div className={`text-xs mt-0.5 ${message.role === 'user' ? 'text-purple-200' : 'text-purple-300'}`}>
+                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
+              {/* Кнопка копирования */}
+              <button
+                onClick={() => copyToClipboard(message.content)}
+                className={`mt-1 px-2 py-1 rounded text-xs flex items-center gap-1 transition-colors ${
+                  message.role === 'user'
+                    ? 'text-purple-300 hover:text-white'
+                    : 'text-purple-400 hover:text-white'
+                }`}
+                title="Копировать"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+                  <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
             </div>
           </div>
         ))}
@@ -249,7 +274,10 @@ export default function WintoBot() {
             onKeyPress={handleKeyPress}
             placeholder="Спроси WintoBot..."
             className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2.5 text-white placeholder-purple-300 outline-none focus:border-purple-400 transition-colors text-base"
-            style={{ WebkitAppearance: 'none' }}
+            inputMode="text"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck="false"
           />
           <button
             onClick={sendMessage}
