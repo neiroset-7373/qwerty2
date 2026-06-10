@@ -179,10 +179,10 @@ export default function WintoBot() {
       <StatusBar />
 
       {/* Header */}
-      <div className="px-3 pt-3 pb-2 flex items-center justify-between border-b border-white/10">
+      <div className="px-2 pt-2 pb-1.5 flex items-center justify-between border-b border-white/10">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
               <path d="M12 2a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3 3 3 0 0 1-3-3V5a3 3 0 0 1 3-3z" fill="currentColor"/>
               <path d="M12 9a7 7 0 0 0-7 7v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2a7 7 0 0 0-7-7z" fill="currentColor" opacity="0.5"/>
               <circle cx="9" cy="14" r="1.5" fill="white"/>
@@ -191,26 +191,26 @@ export default function WintoBot() {
             </svg>
           </div>
           <div>
-            <div className="text-white font-bold text-base">WintoBot</div>
-            <div className="text-purple-300 text-xs flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+            <div className="text-white font-bold text-sm">WintoBot</div>
+            <div className="text-purple-300 text-[10px] flex items-center gap-0.5">
+              <span className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></span>
               Онлайн
             </div>
           </div>
         </div>
         <button
           onClick={clearChat}
-          className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          className="p-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
           title="Очистить чат"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-white">
             <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide px-3 py-2 space-y-2">
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-2 py-1.5 space-y-1.5">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -218,28 +218,28 @@ export default function WintoBot() {
           >
             <div className="max-w-[85%]">
               <div
-                className={`rounded-2xl px-3 py-2 ${
+                className={`rounded-2xl px-2.5 py-1.5 ${
                   message.role === 'user'
                     ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-br-none'
                     : 'bg-white/10 backdrop-blur-sm text-white rounded-bl-none border border-white/10'
                 }`}
               >
-                <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</div>
-                <div className={`text-xs mt-0.5 ${message.role === 'user' ? 'text-purple-200' : 'text-purple-300'}`}>
+                <div className="text-xs leading-relaxed whitespace-pre-wrap break-words">{message.content}</div>
+                <div className={`text-[10px] mt-0.5 ${message.role === 'user' ? 'text-purple-200' : 'text-purple-300'}`}>
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
               {/* Кнопка копирования */}
               <button
                 onClick={() => copyToClipboard(message.content)}
-                className={`mt-1 px-2 py-1 rounded text-xs flex items-center gap-1 transition-colors ${
+                className={`mt-0.5 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-0.5 transition-colors ${
                   message.role === 'user'
                     ? 'text-purple-300 hover:text-white'
                     : 'text-purple-400 hover:text-white'
                 }`}
                 title="Копировать"
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
                   <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="2"/>
                   <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
@@ -250,8 +250,8 @@ export default function WintoBot() {
 
         {isLoadingBot && (
           <div className="flex justify-start">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl rounded-bl-none px-3 py-2 border border-white/10">
-              <div className="flex gap-1">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl rounded-bl-none px-2.5 py-1.5 border border-white/10">
+              <div className="flex gap-0.5">
                 <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
                 <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                 <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
@@ -264,8 +264,8 @@ export default function WintoBot() {
       </div>
 
       {/* Input */}
-      <div className="px-3 pb-3 pt-2 border-t border-white/10">
-        <div className="flex gap-2 items-end">
+      <div className="px-2 pb-2 pt-1.5 border-t border-white/10">
+        <div className="flex gap-1.5">
           <input
             ref={inputRef}
             type="text"
@@ -273,24 +273,22 @@ export default function WintoBot() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Спроси WintoBot..."
-            className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2.5 text-white placeholder-purple-300 outline-none focus:border-purple-400 transition-colors text-base"
+            className="flex-1 h-10 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 text-white placeholder-purple-300 outline-none focus:border-purple-400 transition-colors text-sm"
             inputMode="text"
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck="false"
+            autoComplete="off"
           />
           <button
             onClick={sendMessage}
             disabled={isLoadingBot || !input.trim()}
-            className="w-11 h-11 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            className="h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
               <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-        </div>
-        <div className="text-center text-purple-400 text-xs mt-1.5">
-          WintoBot использует AI · Может ошибаться
         </div>
       </div>
 

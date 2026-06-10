@@ -1,0 +1,23 @@
+{
+  "appId": "com.wintozo.qwerui",
+  "productName": "QwerUI",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "main.js",
+    "package.json"
+  ],
+  "main": "main.js",
+  "win": {
+    "target": [
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "public/icon.png",
+    "artifactName": "${productName}-${version}.${ext}"
+  }
+}
